@@ -1,6 +1,7 @@
 package com.example.provider.service;
 
 import com.example.provider.entity.Product;
+import com.example.provider.exception.ProductNotFoundException;
 import com.example.provider.repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class ProductService implements IProductService{
 
     @Override
     public Product getProductById(Integer id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " Not Found"));
     }
 
     @Override
@@ -35,6 +36,7 @@ public class ProductService implements IProductService{
 
     @Override
     public void deleteProduct(Integer id) {
+        Product product = repo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " Not Found"));
         repo.deleteById(id);
     }
 }
