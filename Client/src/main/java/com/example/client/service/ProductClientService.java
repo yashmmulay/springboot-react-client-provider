@@ -1,6 +1,7 @@
 package com.example.client.service;
 
 import com.example.client.dto.Product;
+import com.example.client.exception.ProviderUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,8 +13,14 @@ public class ProductClientService implements  IProductClientService{
     @Autowired
     WebClient webClient;
 
+
     @Override
     public List<Product> getAllProducts() {
-        return webClient.get().uri("/products").retrieve().bodyToFlux(Product.class).collectList().block();
+
+        try{
+            return webClient.get().uri("/products").retrieve().bodyToFlux(Product.class).collectList().block();
+        }catch(Exception e) {
+            throw new ProviderUnavailableException("Provider service is down");
+        }
     }
 }
