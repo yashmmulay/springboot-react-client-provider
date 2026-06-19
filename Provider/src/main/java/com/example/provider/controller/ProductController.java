@@ -4,6 +4,7 @@ import com.example.provider.entity.Product;
 import com.example.provider.service.IProductService;
 import com.example.provider.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +17,9 @@ public class ProductController {
     private IProductService service;
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product) {
-        return service.addProduct(product);
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product saved = service.addProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping("/{id}")
@@ -31,13 +33,15 @@ public class ProductController {
     }
 
     @PutMapping
-    public Product update(@RequestBody Product product) {
-        return service.updateProduct(product);
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
+        product.setId(id);
+        Product updated = service.updateProduct(product);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Integer id) {
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
         service.deleteProduct(id);
-        return "Deleted Successfully";
+    return ResponseEntity.ok("Deleted successfully!");
     }
 }
